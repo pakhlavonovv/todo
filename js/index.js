@@ -94,8 +94,15 @@ function saveStorage() {
 }
 function editUser(index) {
     edit_user = index
+    forms = {...users[index]}
+    document.querySelector("input[name='first_name']").value = forms.first_name
+    document.querySelector("input[name='last_name']").value = forms.last_name
+    document.querySelector("input[name='age']").value = forms.age
+    document.querySelector("input[name='mail']").value = forms.mail
     toggleModal("block")
 }
-function pagination(){
-
+function deleteTask (index){
+    users.splice(index, 1)
+    saveStorage()
+    displayUsers()
 }
