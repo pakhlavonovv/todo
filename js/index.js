@@ -43,7 +43,7 @@ function displayUsers() {
             <td>${item.mail}</td>
             <td>
                 <button class="btn btn-info" onclick="editUser(${index})">edit</button>
-                <button class="btn btn-danger">delete</button>
+                <button class="btn btn-danger" onclick="deleteTask()">delete</button>
             </td>
         `
         result.appendChild(tr)
