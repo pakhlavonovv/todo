@@ -1,17 +1,101 @@
-// Task 1
+let open_btn = document.getElementById("open-btn")
+let user_modal = document.getElementById("user-modal")
+let close = document.getElementById("close")
+let save = document.getElementById("save")
+let result = document.getElementById("result")
+let forms = {}
+let edit_user = -1;
+let current_page = 1;
+let items_per_page = 2;
+const users = JSON.parse(localStorage.getItem("users")) || []
+let search = ""
+document.addEventListener("DOMContentLoaded", function () {
+    save.addEventListener("click", addUser)
+    displayUsers()
+    saveStorage()
+})
 
-// const createBtn = document.getElementById("createBtn")
-// const container = document.getElementById("container")
-// createBtn.addEventListener("click", function(){
-//     const counter_div = document.createElement("div")
-//     const plus_btn = document.createElement("button")
-//     const minus_btn = document.createElement("button")
-//     const total_display = document.createElement("span")
-//     let total = 0
-//     plus_btn.textContent = '+'
-//     minus_btn.textContent = '-'
-//     plus_btn.onclick = () => total_display.textContent = ++total
-//     minus_btn.onclick = () => total_display.textContent = --total
-//     counter_div.append(minus_btn, total_display, plus_btn)
-//     container.appendChild(counter_div)
-// })  
+open_btn.addEventListener("click", function () {
+    toggleModal("block")
+})
+
+close.addEventListener("click", function () {
+    toggleModal("none")
+})
+
+function displayUsers() {
+    result.innerHTML = ""
+    let filtered_users = users.filter((item) => {
+        if (item.first_name.includes(search)) {
+            return item
+        }
+    })
+    let start_index = (current_page - 1) * items_per_page
+    let end_index = start_index + items_per_page
+    let displayUsers = filtered_users.slice(start_index, end_index)
+    displayUsers.forEach((item, index) => {
+        let tr = document.createElement("tr")
+        tr.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${item.first_name}</td>
+            <td>${item.last_name}</td>
+            <td>${item.age}</td>
+            <td>${item.mail}</td>
+            <td>
+                <button class="btn btn-info" onclick="editUser(${index})">edit</button>
+                <button class="btn btn-danger">delete</button>
+            </td>
+        `
+        result.appendChild(tr)
+    })
+    paginationUsers(filtered_users.length)
+}
+function paginationUsers(total_users){
+    let pagination_controls = document.getElementById("pagination-controls")
+    let total_pages = Math.ceil(total_users / items_per_page)
+    pagination_controls.innerHTML = ""
+    for(let i = 0; i <= total_pages; i++){
+        let page_btn = document.createElement("button")
+        page_btn.innerText = i
+        page_btn.className = i === current_page ? "btn btn-primary mx-1" : "btn btn-outline-primary mx-1"
+        page_btn.addEventListener("click", function(){
+            current_page = i
+            displayUsers()
+        })
+        pagination_controls.appendChild(page_btn)
+    }
+}
+window.addEventListener("click", function (event) {
+    if (event.target === user_modal) {
+        toggleModal("none")
+    }
+})
+function handleChange(event) {
+    const { name, value } = event.target
+    forms = { ...forms, [name]: value }
+
+}
+function addUser() {
+    users.push({ ...forms })
+    displayUsers()
+    toggleModal("none")
+    saveStorage()
+}
+function toggleModal(status) {
+    user_modal.style.display = status
+
+}
+function handleSearch(event) {
+    search = event.target.value
+    displayUsers()
+}
+function saveStorage() {
+    localStorage.setItem("users", JSON.stringify(users))
+}
+function editUser(index) {
+    edit_user = index
+    toggleModal("block")
+}
+function pagination(){
+
+}
